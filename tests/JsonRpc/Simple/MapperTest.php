@@ -2,10 +2,10 @@
 
 namespace Datto\JsonRpc\Simple;
 
-use Datto\JsonRpc\Server;
+use Datto\JsonRpc\Exceptions;
 use Datto\Test\DeviceIdentifier;
 
-class MapperTest extends \PHPUnit_Framework_TestCase
+class MapperTest extends \PHPUnit\Framework\TestCase
 {
     public function testValidMapperV()
     {
@@ -51,28 +51,23 @@ class MapperTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('aabbccdddee', $identifier->getMacAddress());
     }
 
-    /**
-     * @expectedException \Datto\JsonRpc\Exception\Method
-     */
     public function testMapperWithInvalidClass()
     {
+        $this->expectException(Exceptions\MethodException::class);
         $mapper = new Mapper();
         $mapper->getCallable('INVALID/add');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testMapperWithIllegalSeparator()
     {
+        $this->expectException(\InvalidArgumentException::class);
         new Mapper('Datto\\API', 'a');
     }
 
-    /**
-     * @expectedException \Datto\JsonRpc\Exception\Argument
-     */
     public function testMapperWithInvalidClassTypeHintedParam()
     {
+        $this->expectException(Exceptions\ArgumentException::class);
+
         $mapper = new Mapper('Datto\\Test');
 
         $method = $mapper->getCallable('offsite/invalidEndpoint');

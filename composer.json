@@ -11,8 +11,7 @@
         }
     ],
     "require": {
-        "datto/json-rpc": "~3.0",
-        "monolog/monolog": "~1.0"
+        "datto/json-rpc": "~6.1"
     },
     "autoload": {
         "psr-4": {
@@ -23,5 +22,8 @@
         "psr-4": {
             "Datto\\": "tests/"
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9"
     }
 }

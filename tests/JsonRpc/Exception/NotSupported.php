@@ -2,7 +2,9 @@
 
 namespace Datto\JsonRpc\Exception;
 
-class NotSupported extends \Exception implements \Datto\JsonRpc\Exception
+use Datto\JsonRpc\Exceptions\Exception;
+
+class NotSupported extends Exception
 {
     public function __construct()
     {

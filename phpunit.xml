@@ -1,16 +1,17 @@
-<?xml version="1.0" ?>
-<phpunit bootstrap="./vendor/autoload.php" colors="true">
-    <testsuites>
-        <testsuite name="json-rpc-simple">
-            <directory>./tests</directory>
-        </testsuite>
-    </testsuites>
-    <logging>
-        <log charset="UTF-8" target="coverage" type="coverage-html"/>
-    </logging>
-    <filter>
-        <blacklist>
-            <directory>vendor</directory>
-        </blacklist>
-    </filter>
+<?xml version="1.0"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="./vendor/autoload.php" colors="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
+    <coverage>
+        <include>
+            <directory suffix=".php">src</directory>
+        </include>
+        <report>
+            <html outputDirectory="coverage"/>
+        </report>
+    </coverage>
+        <testsuites>
+            <testsuite name="json-rpc-simple">
+                <directory>./tests</directory>
+            </testsuite>
+        </testsuites>
+    <logging/>
 </phpunit>

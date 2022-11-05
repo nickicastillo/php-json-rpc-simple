@@ -2,8 +2,9 @@
 
 namespace Datto\JsonRpc\Simple;
 
-use Exception;
+use Throwable;
 use Datto\JsonRpc;
+use Datto\JsonRpc\Exceptions;
 
 /**
  * Simple implementation of the JsonRpc\Evaluator interface.
@@ -59,14 +60,14 @@ class Evaluator implements JsonRpc\Evaluator
     {
         try {
             return call_user_func_array($callable, $arguments);
-        } catch (Exception $e) {
-            if ($e instanceof JsonRpc\Exception) {
+        } catch (Throwable $e) {
+            if ($e instanceof Exceptions\Exception) {
                 throw $e;
             } else {
                 // Send the original exception to the error log (useful for debugging purposes)
                 error_log(strval($e));
                 // 'Rethrow' the exception, this ensures we don't reveal too much about the implementation
-                throw new JsonRpc\Exception\Evaluation($e->getMessage(), $e->getCode());
+                throw new Exceptions\ApplicationException($e->getMessage(), $e->getCode());
             }
         }
     }

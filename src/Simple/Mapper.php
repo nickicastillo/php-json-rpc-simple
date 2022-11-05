@@ -65,7 +65,7 @@ class Mapper implements JsonRpc\Mapper
      *
      * @param string $methodName JSON-RPC method name
      * @return callable Returns a callable method
-     * @throws JsonRpc\Exception\Method If the method does not map to a valid callable
+     * @throws JsonRpc\Exceptions\MethodException If the method does not map to a valid callable
      */
     public function getCallable($methodName)
     {
@@ -77,7 +77,7 @@ class Mapper implements JsonRpc\Mapper
         $object = $this->createObject($class);
 
         if (!method_exists($object, $method)) {
-            throw new JsonRpc\Exception\Method();
+            throw new JsonRpc\Exceptions\MethodException();
         }
 
         return array($object, $method);
@@ -137,14 +137,14 @@ class Mapper implements JsonRpc\Mapper
      * Validates the method name for valid/invalid characters
      *
      * @param string $methodName JSON-RPC method name
-     * @throws JsonRpc\Exception\Method If the method name in invalid
+     * @throws JsonRpc\Exceptions\MethodException If the method name in invalid
      */
     private function checkMethodName($methodName)
     {
         $methodRegex = '~^[[:alnum:]]+(\\' . $this->separator . '[[:alnum:]]+)+$~';
 
         if (preg_match($methodRegex, $methodName) !== 1) {
-            throw new JsonRpc\Exception\Method();
+            throw new JsonRpc\Exceptions\MethodException();
         }
     }
 
@@ -153,18 +153,18 @@ class Mapper implements JsonRpc\Mapper
      *
      * @param string $class Fully qualified class name
      * @return object Object of the type 'class'
-     * @throws JsonRpc\Exception\Method If the class does not exist or the class creation fails
+     * @throws JsonRpc\Exceptions\MethodException If the class does not exist or the class creation fails
      */
     private function createObject($class)
     {
         if (!class_exists($class)) {
-            throw new JsonRpc\Exception\Method();
+            throw new JsonRpc\Exceptions\MethodException();
         }
 
         try {
             return new $class();
-        } catch (Exception $e) {
-            throw new JsonRpc\Exception\Method();
+        } catch (\Throwable $e) {
+            throw new JsonRpc\Exceptions\MethodException();
         }
     }
 
@@ -194,7 +194,7 @@ class Mapper implements JsonRpc\Mapper
      * @param callable $callable A callable to be used to detect the argument names.
      * @param array $arguments Array of arguments; keys will be used to match parameters.
      * @return array Returns an index-based array or arguments.
-     * @throws JsonRpc\Exception\Argument If arguments are invalid or missing
+     * @throws JsonRpc\Exceptions\ArgumentException If arguments are invalid or missing
      */
     private function orderAndFillArguments($callable, $arguments, $indexByName)
     {
@@ -209,7 +209,7 @@ class Mapper implements JsonRpc\Mapper
             } else if ($param->isOptional()) {
                 $filledArguments[] = $this->fillArgument($param, $param->getDefaultValue());
             } else {
-                throw new JsonRpc\Exception\Argument();
+                throw new JsonRpc\Exceptions\ArgumentException();
             }
         }
 
@@ -230,7 +230,7 @@ class Mapper implements JsonRpc\Mapper
      * @param ReflectionParameter $param Reflection parameter
      * @param mixed $value Raw value of the parameter
      * @return mixed Expanded value of the parameter
-     * @throws JsonRpc\Exception\Argument If the typehinted class doesn't exist, or the object cannot be created
+     * @throws JsonRpc\Exceptions\ArgumentException If the typehinted class doesn't exist, or the object cannot be created
      */
     private function fillArgument(ReflectionParameter $param, $value)
     {
@@ -245,11 +245,11 @@ class Mapper implements JsonRpc\Mapper
                 if (class_exists($class)) {
                     return new $class($value);
                 } else {
-                    throw new JsonRpc\Exception\Argument();
+                    throw new JsonRpc\Exceptions\ArgumentException();
                 }
             }
-        } catch (Exception $e) {
-            throw new JsonRpc\Exception\Argument();
+        } catch (\Throwable $e) {
+            throw new JsonRpc\Exceptions\ArgumentException();
         }
     }
 }

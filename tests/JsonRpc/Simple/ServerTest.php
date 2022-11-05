@@ -4,7 +4,7 @@ namespace Datto\JsonRpc\Simple;
 
 use Datto\JsonRpc\Server;
 
-class ServerTest extends \PHPUnit_Framework_TestCase
+class ServerTest extends \PHPUnit\Framework\TestCase
 {
     public function testSimpleEvaluatorWithValidPositionalArguments()
     {

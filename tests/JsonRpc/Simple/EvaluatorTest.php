@@ -2,9 +2,10 @@
 
 namespace Datto\JsonRpc\Simple;
 
-use Datto\JsonRpc\Server;
+use Datto\JsonRpc\Exception;
+use Datto\JsonRpc\Exceptions;
 
-class EvaluatorTest extends \PHPUnit_Framework_TestCase
+class EvaluatorTest extends \PHPUnit\Framework\TestCase
 {
     public function testEvaluatorWithPositionalArguments()
     {
@@ -78,84 +79,66 @@ class EvaluatorTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('deviceID=dummy, mac=aabbccddeeff', $result);
     }
 
-    /**
-     * @expectedException \Datto\JsonRpc\Exception\Evaluation
-     */
     public function testEvaluationWithEvaluationException()
     {
         $evaluator = new Evaluator();
+        $this->expectException(Exceptions\ApplicationException::class);
         $evaluator->evaluate('math/divide', array(1, 0));
     }
 
-    /**
-     * @expectedException \Datto\JsonRpc\Exception\NotSupported
-     */
     public function testEvaluatorWithCustomException()
     {
         $evaluator = new Evaluator();
+        $this->expectException(Exception\NotSupported::class);
         $evaluator->evaluate('math/add', array(1, 2));
     }
 
-    /**
-     * @expectedException \Datto\JsonRpc\Exception\Method
-     */
     public function testEvaluatorWithNoClassName()
     {
         $evaluator = new Evaluator();
+        $this->expectException(Exceptions\MethodException::class);
         $evaluator->evaluate('subtract', array(3, 2));
     }
 
-    /**
-     * @expectedException \Datto\JsonRpc\Exception\Method
-     */
     public function testEvaluatorWithInvalidClass()
     {
         $evaluator = new Evaluator();
+        $this->expectException(Exceptions\MethodException::class);
         $evaluator->evaluate('INVALID/subtract', array('b' => 2, 'a' => 3));
     }
 
-    /**
-     * @expectedException \Datto\JsonRpc\Exception\Method
-     */
     public function testEvaluatorWithInvalidMethod()
     {
         $evaluator = new Evaluator();
+        $this->expectException(Exceptions\MethodException::class);
         $evaluator->evaluate('math/INVALID', array('b' => 2, 'a' => 3));
     }
 
-    /**
-     * @expectedException \Datto\JsonRpc\Exception\Argument
-     */
     public function testEvaluatorWithNamedArgumentMissingAndInvalid()
     {
         $evaluator = new Evaluator();
+        $this->expectException(Exceptions\ArgumentException::class);
         $evaluator->evaluate('math/subtract', array('INVALID' => 2, 'a' => 3));
     }
 
-    /**
-     * @expectedException \Datto\JsonRpc\Exception\Argument
-     */
     public function testEvaluatorWithNamedArgumentMissing()
     {
         $evaluator = new Evaluator();
+        $this->expectException(Exceptions\ArgumentException::class);
         $evaluator->evaluate('math/subtract', array('a' => 3));
     }
 
-    /**
-     * @expectedException \Datto\JsonRpc\Exception\Argument
-     */
     public function testEvaluatorWithPositionalArgumentMissing()
     {
         $evaluator = new Evaluator();
+        $this->expectException(Exceptions\ArgumentException::class);
         $evaluator->evaluate('math/subtract', array(3));
     }
 
-    /**
-     * @expectedException \Datto\JsonRpc\Exception\Method
-     */
     public function testEvaluatorWithInvalidEndpoint()
     {
         $evaluator = new Evaluator();
+        $this->expectException(Exceptions\MethodException::class);
         $evaluator->evaluate('illegal/robBank', array());
     }
 }
